@@ -23,8 +23,7 @@ public class session extends HttpServlet {
         response.setHeader("Access-Control-Allow-Headers", "Origin, Accept, x-requested-with, Content-Type");
 
         try ( PrintWriter out = response.getWriter()) {
-            String op = request.getParameter("op");
-            String result = "";
+            String op = request.getParameter("op");            
             HttpSession oSession = request.getSession();
             Gson oGson = new Gson();
             switch (op) {
