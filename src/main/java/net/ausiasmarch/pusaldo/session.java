@@ -11,42 +11,45 @@ import javax.servlet.http.HttpSession;
 
 public class session extends HttpServlet {
 
-    private void doCORS(HttpServletRequest oRequest, HttpServletResponse oResponse) {   
-        System.out.println("Request: "+oRequest.getRequestURI());
-        System.out.println("FROM IP: "+oRequest.getHeader("x-forwarded-for"));
-        oResponse.setContentType("application/json;charset=UTF-8");        
-        if (!(oRequest.getMethod().equalsIgnoreCase("OPTIONS"))) {        
+    private void doCORS(HttpServletRequest oRequest, HttpServletResponse oResponse) {
+        oResponse.setContentType("application/json;charset=UTF-8");
+        if (!(oRequest.getMethod().equalsIgnoreCase("OPTIONS"))) {
             oResponse.setHeader("Cache-control", "no-cache, no-store");
             oResponse.setHeader("Pragma", "no-cache");
-            oResponse.setHeader("Expires", "-1");        
+            oResponse.setHeader("Expires", "-1");
             oResponse.setHeader("Access-Control-Allow-Origin", oRequest.getHeader("origin"));
             oResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,HEAD,PATCH");
             oResponse.setHeader("Access-Control-Max-Age", "86400");
             oResponse.setHeader("Access-Control-Allow-Credentials", "true");
-            oResponse.setHeader("Access-Control-Allow-Headers", "x-requested-with");
-            oResponse.setHeader("Access-Control-Allow-Headers", "Content-Type");            
-            oResponse.setHeader("Access-Control-Allow-Headers", "Origin");            
-            oResponse.setHeader("Access-Control-Allow-Headers", "Accept"); 
-            oResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
-            oResponse.addHeader("Access-Control-Expose-Headers", "responseType");
-            oResponse.addHeader("Access-Control-Expose-Headers", "observe");
-         } else {
-            //https://stackoverflow.com/questions/56479150/access-blocked-by-cors-policy-response-to-preflight-request-doesnt-pass-access
+            oResponse.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, "
+                    + "Origin, "
+                    + "Accept, "
+                    + "Authorization, "
+                    + "ResponseType, "
+                    + "Observe, "
+                    + "X-Requested-With, "
+                    + "Content-Type, "
+                    + "Access-Control-Expose-Headers, "
+                    + "Access-Control-Request-Method, "
+                    + "Access-Control-Request-Headers");
+        } else {
+            // https://stackoverflow.com/questions/56479150/access-blocked-by-cors-policy-response-to-preflight-request-doesnt-pass-access
             System.out.println("Pre-flight");
             oResponse.setHeader("Access-Control-Allow-Origin", oRequest.getHeader("origin"));
             oResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,HEAD,PATCH");
             oResponse.setHeader("Access-Control-Max-Age", "3600");
             oResponse.setHeader("Access-Control-Allow-Credentials", "true");
-            oResponse.setHeader("Access-Control-Allow-Headers", "Access-Control-Expose-Headers");
-            oResponse.setHeader("Access-Control-Allow-Headers", "Access-Control-Request-Headers");
-            oResponse.setHeader("Access-Control-Allow-Headers", "Access-Control-Request-Method");            
-            oResponse.setHeader("Access-Control-Allow-Headers", "x-requested-with");
-            oResponse.setHeader("Access-Control-Allow-Headers", "Content-Type");
-            oResponse.setHeader("Access-Control-Allow-Headers", "Origin");            
-            oResponse.setHeader("Access-Control-Allow-Headers", "Accept"); 
-            oResponse.setHeader("Access-Control-Allow-Headers", "Authorization");                       
-            oResponse.setHeader("Access-Control-Allow-Headers", "ResponseType");
-            oResponse.setHeader("Access-Control-Allow-Headers", "Observe");
+            oResponse.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, "
+                    + "Origin, "
+                    + "Accept, "
+                    + "Authorization, "
+                    + "ResponseType, "
+                    + "Observe, "
+                    + "X-Requested-With, "
+                    + "Content-Type, "
+                    + "Access-Control-Expose-Headers, "
+                    + "Access-Control-Request-Method, "
+                    + "Access-Control-Request-Headers");
             oResponse.setStatus(HttpServletResponse.SC_OK);
         }
     }
