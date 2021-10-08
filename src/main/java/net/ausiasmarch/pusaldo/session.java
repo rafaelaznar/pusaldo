@@ -1,55 +1,95 @@
 package net.ausiasmarch.pusaldo;
 
 import com.google.gson.Gson;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import net.ausiasmarch.pusaldo.UserBean;
 
 public class session extends HttpServlet {
 
-    private void doCORS(HttpServletRequest oRequest, HttpServletResponse oResponse) {
-        oResponse.setContentType("application/json;charset=UTF-8");
-        if (!(oRequest.getMethod().equalsIgnoreCase("OPTIONS"))) {
+    private static String getBody(HttpServletRequest request) throws IOException {
+        //https://stackoverflow.com/questions/14525982/getting-request-payload-from-post-request-in-java-servlet
+    String body = null;
+    StringBuilder stringBuilder = new StringBuilder();
+    BufferedReader bufferedReader = null;
+
+    try {
+        InputStream inputStream = request.getInputStream();
+        if (inputStream != null) {
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            char[] charBuffer = new char[128];
+            int bytesRead = -1;
+            while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+                stringBuilder.append(charBuffer, 0, bytesRead);
+            }
+        } else {
+            stringBuilder.append("");
+        }
+    } catch (IOException ex) {
+        throw ex;
+    } finally {
+        if (bufferedReader != null) {
+            try {
+                bufferedReader.close();
+            } catch (IOException ex) {
+                throw ex;
+            }
+        }
+    }
+
+    body = stringBuilder.toString();
+    return body;
+}
+    
+    private void doCORS(HttpServletRequest oRequest, HttpServletResponse oResponse) {   
+        System.out.println("Request: "+oRequest.getRequestURI());
+        System.out.println("FROM IP: "+oRequest.getHeader("x-forwarded-for"));
+        oResponse.setContentType("application/json;charset=UTF-8");        
+        if (!(oRequest.getMethod().equalsIgnoreCase("OPTIONS"))) {        
             oResponse.setHeader("Cache-control", "no-cache, no-store");
             oResponse.setHeader("Pragma", "no-cache");
-            oResponse.setHeader("Expires", "-1");
+            oResponse.setHeader("Expires", "-1");        
             oResponse.setHeader("Access-Control-Allow-Origin", oRequest.getHeader("origin"));
             oResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,HEAD,PATCH");
             oResponse.setHeader("Access-Control-Max-Age", "86400");
             oResponse.setHeader("Access-Control-Allow-Credentials", "true");
             oResponse.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, "
-                    + "Origin, "
-                    + "Accept, "
-                    + "Authorization, "
-                    + "ResponseType, "
-                    + "Observe, "
-                    + "X-Requested-With, "
-                    + "Content-Type, "
-                    + "Access-Control-Expose-Headers, "
-                    + "Access-Control-Request-Method, "
-                    + "Access-Control-Request-Headers");
-        } else {
-            // https://stackoverflow.com/questions/56479150/access-blocked-by-cors-policy-response-to-preflight-request-doesnt-pass-access
+                   + "Origin, "
+                   + "Accept, "
+                   + "Authorization, "
+                   + "ResponseType, "
+                   + "Observe, "
+                   + "X-Requested-With, "
+                   + "Content-Type, "
+                   + "Access-Control-Expose-Headers, "
+                   + "Access-Control-Request-Method, "
+                   + "Access-Control-Request-Headers");
+         } else {
+            //https://stackoverflow.com/questions/56479150/access-blocked-by-cors-policy-response-to-preflight-request-doesnt-pass-access
             System.out.println("Pre-flight");
             oResponse.setHeader("Access-Control-Allow-Origin", oRequest.getHeader("origin"));
             oResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,HEAD,PATCH");
             oResponse.setHeader("Access-Control-Max-Age", "3600");
             oResponse.setHeader("Access-Control-Allow-Credentials", "true");
             oResponse.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, "
-                    + "Origin, "
-                    + "Accept, "
-                    + "Authorization, "
-                    + "ResponseType, "
-                    + "Observe, "
-                    + "X-Requested-With, "
-                    + "Content-Type, "
-                    + "Access-Control-Expose-Headers, "
-                    + "Access-Control-Request-Method, "
-                    + "Access-Control-Request-Headers");
+                   + "Origin, "
+                   + "Accept, "
+                   + "Authorization, "
+                   + "ResponseType, "
+                   + "Observe, "
+                   + "X-Requested-With, "
+                   + "Content-Type, "
+                   + "Access-Control-Expose-Headers, "
+                   + "Access-Control-Request-Method, "
+                   + "Access-Control-Request-Headers");
             oResponse.setStatus(HttpServletResponse.SC_OK);
         }
     }
@@ -109,16 +149,19 @@ public class session extends HttpServlet {
         Gson oGson = new Gson();
         try ( PrintWriter out = response.getWriter()) {
             HttpSession oSession = request.getSession();
-            String login = request.getParameter("login");
-            String password = request.getParameter("password");
-            if (login != null && password != null) {
-                if (login.equalsIgnoreCase("admin") && password.equalsIgnoreCase("8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918")) { //admin
-                    oSession.setAttribute("usuario", login);
+
+            String payloadRequest = getBody(request);
+            UserBean oUserBean = new UserBean();
+            oUserBean = oGson.fromJson(payloadRequest, oUserBean.getClass());
+            
+            if (oUserBean.getLogin() != null && oUserBean.getPassword() != null) {
+                if (oUserBean.getLogin().equalsIgnoreCase("admin") && oUserBean.getPassword().equalsIgnoreCase("8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918")) { //admin
+                    oSession.setAttribute("usuario", oUserBean);
                     response.setStatus(HttpServletResponse.SC_OK);
                     out.print(oGson.toJson("Welcome"));
                 } else {
-                    if (login.equalsIgnoreCase("user") && password.equalsIgnoreCase("04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb")) { //user
-                        oSession.setAttribute("usuario", login);                        
+                    if (oUserBean.getLogin().equalsIgnoreCase("user") && oUserBean.getPassword().equalsIgnoreCase("04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb")) { //user
+                        oSession.setAttribute("usuario", oUserBean);
                         response.setStatus(HttpServletResponse.SC_OK);
                         out.print(oGson.toJson("Welcome"));
                     } else {
