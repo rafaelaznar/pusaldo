@@ -62,16 +62,16 @@ public class session extends HttpServlet {
             oResponse.setHeader("Access-Control-Max-Age", "86400");
             oResponse.setHeader("Access-Control-Allow-Credentials", "true");
             oResponse.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, "
-                    + "Origin, "
-                    + "Accept, "
-                    + "Authorization, "
-                    + "ResponseType, "
-                    + "Observe, "
-                    + "X-Requested-With, "
-                    + "Content-Type, "
-                    + "Access-Control-Expose-Headers, "
-                    + "Access-Control-Request-Method, "
-                    + "Access-Control-Request-Headers");
+                   + "Origin, "
+                   + "Accept, "
+                   + "Authorization, "
+                   + "ResponseType, "
+                   + "Observe, "
+                   + "X-Requested-With, "
+                   + "Content-Type, "
+                   + "Access-Control-Expose-Headers, "
+                   + "Access-Control-Request-Method, "
+                   + "Access-Control-Request-Headers");
         } else {
             //https://stackoverflow.com/questions/56479150/access-blocked-by-cors-policy-response-to-preflight-request-doesnt-pass-access
             System.out.println("Pre-flight");
@@ -80,29 +80,29 @@ public class session extends HttpServlet {
             oResponse.setHeader("Access-Control-Max-Age", "3600");
             oResponse.setHeader("Access-Control-Allow-Credentials", "true");
             oResponse.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, "
-                    + "Origin, "
-                    + "Accept, "
-                    + "Authorization, "
-                    + "ResponseType, "
-                    + "Observe, "
-                    + "X-Requested-With, "
-                    + "Content-Type, "
-                    + "Access-Control-Expose-Headers, "
-                    + "Access-Control-Request-Method, "
-                    + "Access-Control-Request-Headers");
+                   + "Origin, "
+                   + "Accept, "
+                   + "Authorization, "
+                   + "ResponseType, "
+                   + "Observe, "
+                   + "X-Requested-With, "
+                   + "Content-Type, "
+                   + "Access-Control-Expose-Headers, "
+                   + "Access-Control-Request-Method, "
+                   + "Access-Control-Request-Headers");
             oResponse.setStatus(HttpServletResponse.SC_OK);
         }
     }
 
     @Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+           throws ServletException, IOException {
         doCORS(request, response);
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+           throws ServletException, IOException {
         System.out.println("goGET Request: " + request.getRequestURI());
         doCORS(request, response);
         Gson oGson = new Gson();
@@ -120,12 +120,11 @@ public class session extends HttpServlet {
                         out.print(oGson.toJson((String) ((UserBean) oSession.getAttribute("usuario")).getLogin()));
                         break;
                     case "get":
-
                         UserBean oUserBean1 = (UserBean) oSession.getAttribute("usuario");
-                        String name=null;
-                        if (oUserBean1!=null){
-                            name=oUserBean1.getLogin();
-                        } 
+                        String name = null;
+                        if (oUserBean1 != null) {
+                            name = oUserBean1.getLogin();
+                        }
 //                        NullPointerException is a run-time exception which is not recommended to catch it, but instead avoid it:
 //                        https://stackoverflow.com/questions/15146339/catching-nullpointerexception-in-java  
 //                        String name;
@@ -161,7 +160,7 @@ public class session extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+           throws ServletException, IOException {
         doCORS(request, response);
         Gson oGson = new Gson();
         try ( PrintWriter out = response.getWriter()) {
@@ -195,7 +194,7 @@ public class session extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+           throws ServletException, IOException {
         doCORS(request, response);
         Gson oGson = new Gson();
         try ( PrintWriter out = response.getWriter()) {
