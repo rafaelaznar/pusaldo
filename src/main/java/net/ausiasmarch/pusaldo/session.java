@@ -121,17 +121,19 @@ public class session extends HttpServlet {
                         break;
                     case "get":
 
-//                        UserBean oUserBean1 = (UserBean) oSession.getAttribute("usuario");
-//                        String name=null;
-//                        if (oUserBean1!=null){
-//                            name=oUserBean1.getLogin();
-//                        } 
-                        String name;
-                        try {
-                            name = ((UserBean) oSession.getAttribute("usuario")).getLogin();
-                        } catch (Exception ex) {
-                            name = null;
-                        }
+                        UserBean oUserBean1 = (UserBean) oSession.getAttribute("usuario");
+                        String name=null;
+                        if (oUserBean1!=null){
+                            name=oUserBean1.getLogin();
+                        } 
+//                        NullPointerException is a run-time exception which is not recommended to catch it, but instead avoid it:
+//                        https://stackoverflow.com/questions/15146339/catching-nullpointerexception-in-java  
+//                        String name;
+//                        try {
+//                            name = ((UserBean) oSession.getAttribute("usuario")).getLogin();
+//                        } catch (Exception ex) {
+//                            name = null;
+//                        }
                         if (name != null) {
                             if (name == "admin") {
                                 response.setStatus(HttpServletResponse.SC_OK);
