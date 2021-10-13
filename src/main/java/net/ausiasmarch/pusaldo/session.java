@@ -134,7 +134,7 @@ public class session extends HttpServlet {
 //                            name = null;
 //                        }
                         if (name != null) {
-                            if (name == "admin") {
+                            if (name.equalsIgnoreCase("admin")) {
                                 response.setStatus(HttpServletResponse.SC_OK);
                                 out.print(oGson.toJson("QWERTY"));
                             } else {
